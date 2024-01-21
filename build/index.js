@@ -2,288 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/attributes/sidebarSelect.js":
-/*!*****************************************!*\
-  !*** ./src/attributes/sidebarSelect.js ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-
-/* Add custom attribute to image block, in Sidebar */
-const {
-  __
-} = wp.i18n;
-
-// Enable custom attributes on Image block
-const enableSidebarSelectOnBlocks = ['core/image'];
-const {
-  createHigherOrderComponent
-} = wp.compose;
-const {
-  Fragment
-} = wp.element;
-const {
-  InspectorControls
-} = wp.blockEditor;
-const {
-  PanelBody,
-  SelectControl
-} = wp.components;
-
-// import React from 'react';
-// import styles from '././style.scss';
-// import classnames from 'classnames'
-
-/**
- * Declare our custom attribute
- */
-const setSidebarSelectAttribute = (settings, name) => {
-  // Do nothing if it's another block than our defined ones.
-  if (!enableSidebarSelectOnBlocks.includes(name)) {
-    return settings;
-  }
-  return Object.assign({}, settings, {
-    attributes: Object.assign({}, settings.attributes, {
-      imageAttribute: {
-        type: 'string'
-      }
-    })
-  });
-};
-wp.hooks.addFilter('blocks.registerBlockType', 'custom-attributes/set-sidebar-select-attribute', setSidebarSelectAttribute);
-
-/**
- * Add Custom Select to Image Sidebar
- */
-const withSidebarSelect = createHigherOrderComponent(BlockEdit => {
-  return props => {
-    // If current block is not allowed
-    if (!enableSidebarSelectOnBlocks.includes(props.name)) {
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
-        ...props
-      });
-    }
-    const {
-      attributes,
-      setAttributes
-    } = props;
-    const {
-      imageAttribute
-    } = attributes;
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
-      ...props
-    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(PanelBody, {
-      title: __('Image Custom Attributes')
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(SelectControl, {
-      label: __('Custom Attribute'),
-      value: imageAttribute,
-      options: [{
-        label: __('None'),
-        value: ''
-      }, {
-        label: __('One'),
-        value: 'one'
-      }],
-      onChange: value => {
-        setAttributes({
-          imageAttribute: value
-        });
-      }
-    }))));
-  };
-}, 'withSidebarSelect');
-wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-sidebar-select', withSidebarSelect);
-
-/**
- * Add custom class to block in Edit
- */
-const withSidebarSelectProp = createHigherOrderComponent(BlockListBlock => {
-  return props => {
-    // If current block is not allowed
-    if (!enableSidebarSelectOnBlocks.includes(props.name)) {
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockListBlock, {
-        ...props
-      });
-    }
-    const {
-      attributes
-    } = props;
-    const {
-      imageAttribute
-    } = attributes;
-    if (imageAttribute) {
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockListBlock, {
-        ...props,
-        className: 'has-option-' + imageAttribute
-      });
-    } else {
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockListBlock, {
-        ...props
-      });
-    }
-  };
-}, 'withSidebarSelectProp');
-wp.hooks.addFilter('editor.BlockListBlock', 'custom-attributes/with-sidebar-select-prop', withSidebarSelectProp);
-
-/**
- * Save our custom attribute
- */
-const saveSidebarSelectAttribute = (extraProps, blockType, attributes) => {
-  // Do nothing if it's another block than our defined ones.
-  if (enableSidebarSelectOnBlocks.includes(blockType.name)) {
-    const {
-      imageAttribute
-    } = attributes;
-    if (imageAttribute) {
-      // extraProps.className = classnames( extraProps.className, 'has-option-' + imageAttribute )
-    }
-  }
-  return extraProps;
-};
-wp.hooks.addFilter('blocks.getSaveContent.extraProps', 'custom-attributes/save-sidebar-select-attribute', saveSidebarSelectAttribute);
-
-/***/ }),
-
-/***/ "./src/attributes/toolbarButton.js":
-/*!*****************************************!*\
-  !*** ./src/attributes/toolbarButton.js ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-
-
-
-/* Add custom attribute to paragraph block, in Toolbar */
-const {
-  __
-} = wp.i18n;
-
-// Enable custom attributes on Paragraph block
-const enableToolbarButtonOnBlocks = ['core/paragraph'];
-const {
-  createHigherOrderComponent
-} = wp.compose;
-const {
-  Fragment
-} = wp.element;
-const {
-  BlockControls
-} = wp.blockEditor;
-const {
-  ToolbarGroup,
-  ToolbarDropdownMenu
-} = wp.components;
-
-/**
- * Declare our custom attribute
- */
-const setToolbarButtonAttribute = (settings, name) => {
-  // Do nothing if it's another block than our defined ones.
-  if (!enableToolbarButtonOnBlocks.includes(name)) {
-    return settings;
-  }
-  return Object.assign({}, settings, {
-    attributes: Object.assign({}, settings.attributes, {
-      paragraphAttribute: {
-        type: 'string'
-      }
-    })
-  });
-};
-wp.hooks.addFilter('blocks.registerBlockType', 'custom-attributes/set-toolbar-button-attribute', setToolbarButtonAttribute);
-function EmojisData() {
-  const apiUrl = 'https://emojihub.yurace.pro/api/all';
-
-  // Make a GET request using the Fetch API
-  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  let aEmojiHTML = [];
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    try {
-      const response = await fetch(apiUrl);
-      const result = await response.json();
-      setData(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  data.forEach(function (oEmoji) {
-    oEmoji.htmlCode.forEach(function (oHtmlCode) {
-      // var oIcon = {
-      //     title: "Test",
-      //     icon: oHtmlCode
-      // }
-      aEmojiHTML.push(oHtmlCode);
-    });
-  });
-  console.log(aEmojiHTML);
-  return aEmojiHTML;
-}
-
-/**
- * Add Custom Button to Paragraph Toolbar
- */
-const withToolbarButton = createHigherOrderComponent(BlockEdit => {
-  return props => {
-    // If current block is not allowed
-    if (!enableToolbarButtonOnBlocks.includes(props.name)) {
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
-        ...props
-      });
-    }
-    const {
-      attributes,
-      setAttributes
-    } = props;
-    const {
-      paragraphAttribute
-    } = attributes;
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockControls, {
-      group: "block"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarGroup, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarDropdownMenu, {
-      title: ";-)",
-      icon: "\uD83D\uDE00",
-      label: "Select a direction",
-      controls: EmojisData().map(sHtmlEmoji => {
-        return {
-          title: (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-            dangerouslySetInnerHTML: {
-              __html: sHtmlEmoji
-            }
-          }),
-          onClick: () => setEmojiIntoText(sHtmlEmoji)
-        };
-      })
-    }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
-      ...props
-    }));
-  };
-}, 'withToolbarButton');
-wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-toolbar-button', withToolbarButton);
-function setEmojiIntoText(sHtmlEmoji) {
-  var cSelectedBlock = wp.data.select('core/block-editor').getSelectedBlock();
-  console.log("selectedBlock", cSelectedBlock);
-  var sSelectedBlockContent = cSelectedBlock.attributes["content"];
-  console.log("FFF", sSelectedBlockContent);
-  var block = wp.data.select('core/block-editor');
-  console.log("block ", block);
-  var startPos = block.getSelectionStart().offset;
-  var endPos = block.getSelectionEnd().offset;
-  var newSelectedBlockContent = sSelectedBlockContent.substring(0, startPos) + "<html>" + sHtmlEmoji + "</html>" + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
-  console.log("selectedBlockContent NEW", newSelectedBlockContent);
-  cSelectedBlock.attributes["content"] = newSelectedBlockContent;
-}
-
-/***/ }),
-
 /***/ "./src/index.jsx":
 /*!***********************!*\
   !*** ./src/index.jsx ***!
@@ -300,8 +18,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _attributes_toolbarButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./attributes/toolbarButton */ "./src/attributes/toolbarButton.js");
-/* harmony import */ var _attributes_sidebarSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./attributes/sidebarSelect */ "./src/attributes/sidebarSelect.js");
+/* harmony import */ var _toolbarEmojiList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./toolbarEmojiList */ "./src/toolbarEmojiList.js");
 
 /**
  * Registers a new block provided a unique name and an object defining its behavior.
@@ -324,9 +41,180 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Internal dependencies
  */
-// import Edit from './edit';
 
 
+/***/ }),
+
+/***/ "./src/toolbarEmojiList.js":
+/*!*********************************!*\
+  !*** ./src/toolbarEmojiList.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+/* Add custom attribute to paragraph block, in Toolbar */
+const {
+  __
+} = wp.i18n;
+
+// Enable custom attributes on Paragraph block
+const enableEmojiListToolbarOn = ['core/paragraph'];
+const {
+  createHigherOrderComponent
+} = wp.compose;
+const {
+  Fragment
+} = wp.element;
+const {
+  BlockControls
+} = wp.blockEditor;
+const {
+  ToolbarGroup,
+  ToolbarDropdownMenu
+} = wp.components;
+
+/**
+ * Declare custom list attribute
+ */
+const setToolbarEmojiListAttribute = (settings, name) => {
+  // Do nothing if it's another block than our defined ones.
+  if (!enableEmojiListToolbarOn.includes(name)) {
+    return settings;
+  }
+  return Object.assign({}, settings, {
+    attributes: Object.assign({}, settings.attributes, {
+      paragraphAttribute: {
+        type: 'string'
+      }
+    })
+  });
+};
+wp.hooks.addFilter('blocks.registerBlockType', setToolbarEmojiListAttribute);
+
+/**
+ * Add Emoji List to Paragraph Toolbar
+ */
+const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
+  return props => {
+    // If current block is not allowed
+    if (!enableEmojiListToolbarOn.includes(props.name)) {
+      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
+        ...props
+      });
+    }
+    const {
+      attributes,
+      setAttributes
+    } = props;
+    const {
+      paragraphAttribute
+    } = attributes;
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockControls, {
+      group: "block"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarGroup, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarDropdownMenu, {
+      title: ";-)",
+      icon: "\uD83D\uDE00",
+      label: "Select a direction",
+      controls:
+      // Create control for each emoji from API
+      EmojisData().map(sHtmlEmoji => {
+        return {
+          title: (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+            dangerouslySetInnerHTML: {
+              __html: sHtmlEmoji
+            }
+          }),
+          onClick: () => setEmojiIntoText(sHtmlEmoji)
+        };
+      })
+    }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
+      ...props
+    }));
+  };
+}, 'withEmojiListToolbar');
+
+// Add new filters to toolbars
+wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-toolbar-button', withEmojiListToolbar);
+
+/**
+ * Get Emojis data from emojihub API to render them in toolbar custom list
+ */
+function EmojisData() {
+  const apiUrl = 'https://emojihub.yurace.pro/api/all';
+
+  // Make a GET request to API using the fetchData
+  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  let aEmojiHTML = [];
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  console.log("Raw Data", data);
+
+  // Extract only the html code from API data. Push it into own array
+  data.forEach(function (oEmoji) {
+    oEmoji.htmlCode.forEach(function (oHtmlCode) {
+      aEmojiHTML.push(oHtmlCode);
+    });
+  });
+  console.log("All Emojis HTML", aEmojiHTML);
+
+  // Return array as result for toolbar list
+  return aEmojiHTML;
+}
+
+/**
+ * Check if is typing is active on any block
+ */
+wp.data.subscribe(() => {
+  const isTyping = wp.data.select('core/block-editor').isTyping();
+  if (isTyping) console.log("Currently typing");
+});
+
+/**
+ * When emoji is selected from toolbar list, insert it into parents content
+ */
+function setEmojiIntoText(sHtmlEmoji) {
+  var cActiveblock = wp.data.select('core/block-editor');
+  console.log("Active block ", cActiveblock);
+
+  // Get selected block
+  var cSelectedBlock = wp.data.select('core/block-editor').getSelectedBlock();
+  console.log("selected Block", cSelectedBlock);
+
+  // Get selected block content
+  var sSelectedBlockContent = cSelectedBlock.attributes["content"];
+
+  //Set current selected block isTyping tue, so changes can be detected.
+  console.log("Selected Block Dispatch", wp.data.dispatch('core/block-editor'));
+  wp.data.dispatch('core/block-editor').updateBlock(cSelectedBlock.clientId, {
+    "isTyping": "true"
+  });
+
+  // Get last position of the cursor
+  var startPos = cActiveblock.getSelectionStart().offset;
+  var endPos = cActiveblock.getSelectionEnd().offset;
+
+  // Place new content (new emoji) into selected block
+  cSelectedBlock.attributes["content"] = "";
+  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + "<html>" + sHtmlEmoji + "</html>" + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
+}
 
 /***/ }),
 

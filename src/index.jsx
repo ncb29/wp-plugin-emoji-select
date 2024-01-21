@@ -27,6 +27,4 @@ import './style.scss';
 /**
  * Internal dependencies
  */
-// import Edit from './edit';
-import './attributes/toolbarButton'; 
-import './attributes/sidebarSelect'; 
+import './toolbarEmojiList'; 
