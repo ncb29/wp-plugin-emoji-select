@@ -18,37 +18,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _toolbarEmojiList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./toolbarEmojiList */ "./src/toolbarEmojiList.js");
+/* harmony import */ var _toolbarEmojiList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./toolbarEmojiList */ "./src/toolbarEmojiList.jsx");
+/**
+ * Import React.
+ */
+
 
 /**
- * Registers a new block provided a unique name and an object defining its behavior.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
+ * Import WordPress components.
  */
 
 
 
 
 /**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * All files containing `style` keyword are bundled together. The code used
- * gets applied both to the front of your site and to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ * Import CSS.
  */
 
 
 /**
- * Internal dependencies
+ * Import internal dependencies
  */
 
 
 /***/ }),
 
-/***/ "./src/toolbarEmojiList.js":
-/*!*********************************!*\
-  !*** ./src/toolbarEmojiList.js ***!
-  \*********************************/
+/***/ "./src/toolbarEmojiList.jsx":
+/*!**********************************!*\
+  !*** ./src/toolbarEmojiList.jsx ***!
+  \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -122,7 +120,7 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarGroup, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarDropdownMenu, {
       title: ";-)",
       icon: "\uD83D\uDE00",
-      label: "Select a direction",
+      label: "Select Emoji",
       controls:
       // Create control for each emoji from API
       EmojisData().map(sHtmlEmoji => {
@@ -148,39 +146,56 @@ wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-toolbar-button', 
  * Get Emojis data from emojihub API to render them in toolbar custom list
  */
 function EmojisData() {
-  const apiUrl = 'https://emojihub.yurace.pro/api/all';
+  const StoredEmojiHTML = window.localStorage.getItem("EmojiHubHTML");
+  if (!StoredEmojiHTML) {
+    const apiUrl = 'https://emojihub.yurace.pro/api/all';
 
-  // Make a GET request to API using the fetchData
-  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  let aEmojiHTML = [];
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    try {
-      const response = await fetch(apiUrl);
-      const result = await response.json();
-      setData(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    // Make a GET request to API using the fetchData
+    const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+    let aEmojiHTML = [];
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+      fetchData();
+    }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(apiUrl);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    console.log("Raw Data", data);
+    if (data.length > 0) {
+      // Set the emoji raw data into a local storage item to safe requests
+      window.localStorage.setItem("EmojiHubAPIData", JSON.stringify(data));
+
+      // Extract only the html code from API data. Push it into own array
+      data.forEach(function (oEmoji) {
+        oEmoji.htmlCode.forEach(function (oHtmlCode) {
+          aEmojiHTML.push(oHtmlCode);
+        });
+      });
+      console.log("All Emojis HTML", aEmojiHTML);
+
+      // Set the emoji html code into a local storage item to safe requests
+      window.localStorage.setItem("EmojiHubHTML", JSON.stringify(aEmojiHTML));
+
+      // Return array as result for toolbar list
+      return aEmojiHTML;
+    } else {
+      // When no data is fetched, return null. Otherwise function errors.
+      return;
     }
-  };
-  console.log("Raw Data", data);
-
-  // Extract only the html code from API data. Push it into own array
-  data.forEach(function (oEmoji) {
-    oEmoji.htmlCode.forEach(function (oHtmlCode) {
-      aEmojiHTML.push(oHtmlCode);
-    });
-  });
-  console.log("All Emojis HTML", aEmojiHTML);
-
-  // Return array as result for toolbar list
-  return aEmojiHTML;
+  } else {
+    // If emoji html is stored return them from local storage
+    var ParsedEmojiHTML = JSON.parse(window.localStorage.getItem("EmojiHubHTML"));
+    return ParsedEmojiHTML;
+  }
 }
 
 /**
- * Check if is typing is active on any block
+ * Check if is typing is active on any block (helper)
  */
 wp.data.subscribe(() => {
   const isTyping = wp.data.select('core/block-editor').isTyping();
@@ -201,7 +216,7 @@ function setEmojiIntoText(sHtmlEmoji) {
   // Get selected block content
   var sSelectedBlockContent = cSelectedBlock.attributes["content"];
 
-  //Set current selected block isTyping tue, so changes can be detected.
+  //Set current selected block isTyping true, so changes can be detected.
   console.log("Selected Block Dispatch", wp.data.dispatch('core/block-editor'));
   wp.data.dispatch('core/block-editor').updateBlock(cSelectedBlock.clientId, {
     "isTyping": "true"
