@@ -15,9 +15,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./save */ "./src/save.jsx");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./save */ "./src/save.jsx");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
 
 
 /**
@@ -25,6 +27,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
+
 
 
 
@@ -48,6 +51,7 @@ function EmojisData() {
 
   // Make a GET request using the Fetch API
   const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  let aEmojiHTML = [];
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     fetchData();
   }, []);
@@ -60,7 +64,17 @@ function EmojisData() {
       console.error('Error fetching data:', error);
     }
   };
-  return data;
+  data.forEach(function (oEmoji) {
+    oEmoji.htmlCode.forEach(function (oHtmlCode) {
+      // var oIcon = {
+      //     title: "Test",
+      //     icon: oHtmlCode
+      // }
+      aEmojiHTML.push(oHtmlCode);
+    });
+  });
+  console.log(aEmojiHTML);
+  return aEmojiHTML;
 }
 function SelectedEmoji({
   emoji
@@ -72,22 +86,26 @@ function SelectedEmoji({
     }
   });
 }
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_6__.name, {
   attributes: {
     emoji: {
-      type: 'chars',
+      type: 'string',
       default: ''
     }
   },
-  edit: function (props) {
+  supports: {
+    align: ['wide', 'full']
+  },
+  edit: props => {
+    const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)();
     const {
       attributes: {
         emoji
       },
+      attributes,
       setAttributes
     } = props;
-    // const blockProps = useBlockProps();
-
+    const alignmentClass = attributes.textAlignment != null ? 'has-text-align-' + attributes.textAlignment : '';
     function setEmoji(event) {
       const selected = event.target.querySelector('option:checked');
       setAttributes({
@@ -96,8 +114,14 @@ function SelectedEmoji({
       event.preventDefault();
     }
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: props.className
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(SelectedEmoji, {
+      ...blockProps
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, "..."), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.BlockControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Toolbar, {
+      label: "Options"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.ToolbarDropdownMenu, {
+      icon: "",
+      label: "Select a direction",
+      controls: EmojisData()
+    }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(SelectedEmoji, {
       emoji: emoji
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("form", {
       onSubmit: setEmoji
@@ -106,15 +130,15 @@ function SelectedEmoji({
       onChange: setEmoji
     }, EmojisData().map(item => {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
-        value: item.htmlCode
+        value: item
       }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
         dangerouslySetInnerHTML: {
-          __html: item.htmlCode
+          __html: item
         }
       }));
     }))));
   },
-  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
+  save: _save__WEBPACK_IMPORTED_MODULE_5__["default"]
 });
 
 /***/ }),
@@ -152,6 +176,7 @@ __webpack_require__.r(__webpack_exports__);
  * @return {Element} Element to render.
  */
 function save(props) {
+  // const blockProps = useBlockProps();
   const {
     attributes: {
       emoji
@@ -205,6 +230,16 @@ module.exports = window["wp"]["blockEditor"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["blocks"];
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["components"];
 
 /***/ }),
 

@@ -16,6 +16,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @return {Element} Element to render.
  */
 export default function save(props) {
+	// const blockProps = useBlockProps();
 	const { attributes: { emoji } } = props;
 	return (
 		<div dangerouslySetInnerHTML={{__html: emoji}} ></div>

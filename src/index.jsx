@@ -5,7 +5,14 @@ import React, { useEffect, useState } from 'react';
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { useBlockProps } from '@wordpress/block-editor';
+import {
+    useBlockProps,
+    RichText,
+    AlignmentToolbar,
+    InspectorControls,
+    BlockControls,
+} from '@wordpress/block-editor';
+import { Toolbar, ToolbarDropdownMenu } from '@wordpress/components';
 
 
 /**
@@ -30,6 +37,7 @@ function EmojisData() {
 
 	// Make a GET request using the Fetch API
 	const [data, setData] = useState([]);
+    let aEmojiHTML = [];
 
 	useEffect(() => {
 		fetchData();
@@ -44,8 +52,18 @@ function EmojisData() {
 		console.error('Error fetching data:', error);
 		}
 	};
-
-	return data;
+    
+    data.forEach(function(oEmoji){
+        oEmoji.htmlCode.forEach(function(oHtmlCode){
+            // var oIcon = {
+            //     title: "Test",
+            //     icon: oHtmlCode
+            // }
+            aEmojiHTML.push(oHtmlCode)
+        });
+    });
+    console.log(aEmojiHTML)
+	return aEmojiHTML;
 }
 
 function SelectedEmoji( { emoji } ) {
@@ -54,38 +72,58 @@ function SelectedEmoji( { emoji } ) {
 }
 
 
+
 registerBlockType( metadata.name, {
 	
     attributes: {
         emoji: {
-            type: 'chars',
+            type: 'string',
             default: ''
         }
     },
+    supports: {
+		align: ['wide', 'full']
+	},
 
-    edit: function(props) {
-
-        const { attributes: { emoji }, setAttributes } = props;
-		// const blockProps = useBlockProps();
-
+    edit: (props) => {       
+        const blockProps = useBlockProps();
+        const { attributes: { emoji }, attributes, setAttributes} = props;
+        const alignmentClass = (attributes.textAlignment != null) ? 'has-text-align-' + attributes.textAlignment : '';		
+        
         function setEmoji( event ) {
             const selected = event.target.querySelector( 'option:checked' );
             setAttributes( { emoji: selected.value } );
             event.preventDefault();
         }
 
+        
         return (
-            <div className={ props.className }>
+            <div { ...blockProps }>
+
+                <InspectorControls>
+					...	
+				</InspectorControls>
+				<BlockControls>
+                <Toolbar label="Options">
+                    <ToolbarDropdownMenu
+                        icon= ""
+                        label="Select a direction"
+                        controls={EmojisData() }
+                    />
+                </Toolbar>
+				</BlockControls>               
+
                 <SelectedEmoji emoji={ emoji } /> 
+                
                 <form onSubmit={ setEmoji }>
                     <select value={ emoji } onChange={ setEmoji }>
-					{EmojisData().map(item => {
-						return (
-							<option value={item.htmlCode}>
-								<div dangerouslySetInnerHTML={{__html: item.htmlCode}} ></div>
-							</option> 
-						)
-					})}   
+                    {EmojisData().map(item => {
+                        return (
+                            <option value={item}>
+                                <div dangerouslySetInnerHTML={{__html: item}} ></div>
+                            </option> 
+                        )
+                    })}   
                     </select> 
                 </form> 
             </div> 
