@@ -61,13 +61,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* Add custom attribute to paragraph block, in Toolbar */
+/* Add custom attribute to blocks, in Toolbar */
 const {
   __
 } = wp.i18n;
 
-// Enable custom attributes on Paragraph block
-const enableEmojiListToolbarOn = ['core/paragraph'];
+// Enable custom attributes on title, paragraph block
+const enableEmojiListToolbarOn = ['core/heading', 'core/paragraph', 'core/details', 'core/freeform', 'core/list-item', 'core/preformatted', 'core/pullquote', 'core/verse', 'core/cover', 'core/media-text'];
 const {
   createHigherOrderComponent
 } = wp.compose;
@@ -93,7 +93,7 @@ const setToolbarEmojiListAttribute = (settings, name) => {
   }
   return Object.assign({}, settings, {
     attributes: Object.assign({}, settings.attributes, {
-      paragraphAttribute: {
+      toolbarAttribute: {
         type: 'string'
       }
     })
@@ -102,7 +102,7 @@ const setToolbarEmojiListAttribute = (settings, name) => {
 wp.hooks.addFilter('blocks.registerBlockType', setToolbarEmojiListAttribute);
 
 /**
- * Add Emoji List to Paragraph Toolbar
+ * Add emoji list to toolbars
  */
 const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
   return props => {
@@ -117,7 +117,7 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
       setAttributes
     } = props;
     const {
-      paragraphAttribute
+      toolbarAttribute
     } = attributes;
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockControls, {
       group: "block"

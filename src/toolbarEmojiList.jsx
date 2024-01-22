@@ -2,12 +2,21 @@ import { useBlockProps } from '@wordpress/block-editor';
 import React, { useEffect, useState } from 'react';
 import { Flex, FlexBlock, FlexItem } from '@wordpress/components';
 
-/* Add custom attribute to paragraph block, in Toolbar */
+/* Add custom attribute to blocks, in Toolbar */
 const { __ } = wp.i18n;
 
-// Enable custom attributes on Paragraph block
+// Enable custom attributes on title, paragraph block
 const enableEmojiListToolbarOn = [
-    'core/paragraph'
+    'core/heading',
+    'core/paragraph',
+    'core/details',
+    'core/freeform',
+    'core/list-item',
+    'core/preformatted',
+    'core/pullquote',
+    'core/verse',
+    'core/cover',
+    'core/media-text'
 ];
 
 const { createHigherOrderComponent } = wp.compose;
@@ -32,7 +41,7 @@ const setToolbarEmojiListAttribute = ( settings, name ) => {
 
     return Object.assign( {}, settings, {
         attributes: Object.assign( {}, settings.attributes, {
-            paragraphAttribute: { type: 'string' }
+            toolbarAttribute: { type: 'string' }
         } ),
     } );
 };
@@ -44,7 +53,7 @@ wp.hooks.addFilter(
 
 
 /**
- * Add Emoji List to Paragraph Toolbar
+ * Add emoji list to toolbars
  */
 const withEmojiListToolbar = createHigherOrderComponent( ( BlockEdit ) => {
     return ( props ) => {
@@ -57,7 +66,7 @@ const withEmojiListToolbar = createHigherOrderComponent( ( BlockEdit ) => {
         }
 
         const { attributes, setAttributes } = props;
-        const { paragraphAttribute } = attributes;
+        const { toolbarAttribute } = attributes;
 
         return (
             <Fragment>  
