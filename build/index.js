@@ -153,8 +153,8 @@ function getEmojiClickEvent(event) {
  * Get Emojis data from emojihub API to render them in toolbar custom list
  */
 function EmojisData() {
-  const StoredEmojiHTML = window.localStorage.getItem("EmojiHubHTML");
-  if (!StoredEmojiHTML) {
+  const StoredEmojiHTML = JSON.parse(window.localStorage.getItem("EmojiHubHTML"));
+  if (StoredEmojiHTML === null || StoredEmojiHTML < 1) {
     const apiUrl = 'https://emojihub.yurace.pro/api/all';
 
     // Make a GET request to API using the fetchData
@@ -192,7 +192,7 @@ function EmojisData() {
       return aEmojiHTML;
     } else {
       // When no data is fetched, return null. Otherwise function errors.
-      return;
+      return [];
     }
   } else {
     // If emoji html is stored return them from local storage
