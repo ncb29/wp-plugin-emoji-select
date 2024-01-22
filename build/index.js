@@ -127,14 +127,14 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
       label: "Select Emoji",
       controls:
       // Create control for each emoji from API
-      EmojisData().map(sHtmlEmoji => {
+      EmojisData().map(oEmoji => {
         return {
           title: (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
             dangerouslySetInnerHTML: {
-              __html: sHtmlEmoji
+              __html: oEmoji.character
             }
           }),
-          onClick: () => (getEmojiClickEvent(event), setEmojiIntoText(sHtmlEmoji))
+          onClick: () => (getEmojiClickEvent(event), setEmojiIntoText(oEmoji.character))
         };
       })
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
@@ -153,13 +153,13 @@ function getEmojiClickEvent(event) {
  * Get Emojis data from emojihub API to render them in toolbar custom list
  */
 function EmojisData() {
-  const StoredEmojiHTML = JSON.parse(window.localStorage.getItem("EmojiHubHTML"));
-  if (StoredEmojiHTML === null || StoredEmojiHTML < 1) {
+  const StoredEmojis = JSON.parse(window.localStorage.getItem("EmojiHubItems"));
+  if (StoredEmojis === null || StoredEmojis < 1) {
     const apiUrl = 'https://emojihub.yurace.pro/api/all';
 
     // Make a GET request to API using the fetchData
     const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-    let aEmojiHTML = [];
+    let aAdjustedEmoji = [];
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
       fetchData();
     }, []);
@@ -174,30 +174,33 @@ function EmojisData() {
     };
     console.log("Raw Data", data);
     if (data.length > 0) {
-      // Set the emoji raw data into a local storage item to safe requests
-      window.localStorage.setItem("EmojiHubAPIData", JSON.stringify(data));
-
-      // Extract only the html code from API data. Push it into own array
+      // Extract necessary data from API. Push it into own array
       data.forEach(function (oEmoji) {
-        oEmoji.htmlCode.forEach(function (oHtmlCode) {
-          aEmojiHTML.push(oHtmlCode);
-        });
+        // Convert unicode emoji into string variable (character)
+        let sConvertedUnicode = oEmoji.unicode[0].replace(/U/g, "0").replace(/\+/g, "x");
+        var oAdjustedEmoji = {
+          "category": oEmoji.category,
+          "group": oEmoji.group,
+          "name": oEmoji.name,
+          "character": String.fromCodePoint(sConvertedUnicode)
+        };
+        aAdjustedEmoji.push(oAdjustedEmoji);
       });
-      console.log("All Emojis HTML", aEmojiHTML);
+      console.log("All Emojis Unicode", aAdjustedEmoji);
 
-      // Set the emoji html code into a local storage item to safe requests
-      window.localStorage.setItem("EmojiHubHTML", JSON.stringify(aEmojiHTML));
+      // Set the emojis into a local storage item to safe requests
+      window.localStorage.setItem("EmojiHubItems", JSON.stringify(aAdjustedEmoji));
 
       // Return array as result for toolbar list
-      return aEmojiHTML;
+      return aAdjustedEmoji;
     } else {
       // When no data is fetched, return null. Otherwise function errors.
       return [];
     }
   } else {
-    // If emoji html is stored return them from local storage
-    var ParsedEmojiHTML = JSON.parse(window.localStorage.getItem("EmojiHubHTML"));
-    return ParsedEmojiHTML;
+    // If emojis are stored return them from local storage
+    var aEmojisFromStorage = JSON.parse(window.localStorage.getItem("EmojiHubItems"));
+    return aEmojisFromStorage;
   }
 }
 
@@ -212,8 +215,7 @@ wp.data.subscribe(() => {
 /**
  * When emoji is selected from toolbar list, insert it into parents content
  */
-function setEmojiIntoText(sHtmlEmoji) {
-  jQuery.decodeEntities = sHtmlEmoji;
+function setEmojiIntoText(emojiCharacter) {
   var cActiveblock = wp.data.select('core/block-editor');
   console.log("Active block ", cActiveblock);
 
@@ -227,16 +229,18 @@ function setEmojiIntoText(sHtmlEmoji) {
   //Set current selected block isTyping true, so changes can be detected.
   console.log("Selected Block Dispatch", wp.data.dispatch('core/block-editor'));
   wp.data.dispatch('core/block-editor').updateBlock(cSelectedBlock.clientId, {
-    "isTyping": "true"
+    "isTyping": "true",
+    "isEditing": "true"
   });
 
   // Get last position of the cursor
-  var startPos = cActiveblock.getSelectionStart().offset;
-  var endPos = cActiveblock.getSelectionEnd().offset;
+  var startPos = wp.data.select('core/block-editor').getSelectionStart().offset;
+  var endPos = wp.data.select('core/block-editor').getSelectionEnd().offset;
+  console.log("Start + End", startPos, endPos);
 
   // Place new content (new emoji) into selected block
   cSelectedBlock.attributes["content"] = "";
-  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + sHtmlEmoji + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
+  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + emojiCharacter + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
 }
 
 /***/ }),
@@ -444,7 +448,7 @@ module.exports = window["wp"]["components"];
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkemoji_block"] = globalThis["webpackChunkemoji_block"] || [];
+/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkemoji_select"] = globalThis["webpackChunkemoji_select"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
