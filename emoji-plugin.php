@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
-function emoji_block_emoji_block_block_init() {
+function emoji_toolbar_select_plugin_init() {
 	register_block_type( __DIR__ . '/build' );
 }
-add_action( 'init', 'emoji_block_emoji_block_block_init' );
+add_action( 'init', 'emoji_toolbar_select_plugin_init' );

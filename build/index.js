@@ -9,28 +9,8 @@
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _toolbarEmojiList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./toolbarEmojiList */ "./src/toolbarEmojiList.jsx");
-/**
- * Import React.
- */
-
-
-/**
- * Import WordPress components.
- */
-
-
-
-
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
+/* harmony import */ var _toolbarEmojiList__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toolbarEmojiList */ "./src/toolbarEmojiList.jsx");
 /**
  * Import CSS.
  */
@@ -57,17 +37,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
 
+/**
+ * Get components and dependencies from React and WordPress
+ */
 
 
 
 
-/* Add custom attribute to blocks, in Toolbar */
-const {
-  __
-} = wp.i18n;
-
-// Enable custom attributes on title, paragraph block
+/**
+ * Enable emoji list in toolbar of common blocks
+ */
 const enableEmojiListToolbarOn = ['core/heading', 'core/paragraph', 'core/details', 'core/freeform', 'core/list-item', 'core/preformatted', 'core/pullquote', 'core/verse', 'core/cover', 'core/media-text'];
+
+/**
+ * Define components for emoji list toolbar
+ */
 const {
   createHigherOrderComponent
 } = wp.compose;
@@ -79,12 +63,11 @@ const {
 } = wp.blockEditor;
 const {
   ToolbarGroup,
-  ToolbarButton,
-  ToolbarDropdownMenu
+  ToolbarButton
 } = wp.components;
 
 /**
- * Declare custom list attribute
+ * Declare emoji list toolbar attributes to common toolbars
  */
 const setToolbarEmojiListAttribute = (settings, name) => {
   // Do nothing if it's another block than our defined ones.
@@ -102,7 +85,7 @@ const setToolbarEmojiListAttribute = (settings, name) => {
 wp.hooks.addFilter('blocks.registerBlockType', setToolbarEmojiListAttribute);
 
 /**
- * Add emoji list to toolbars
+ * Render emoji list to toolbars
  */
 const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
   return props => {
@@ -113,12 +96,8 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
       });
     }
     const {
-      attributes,
-      setAttributes
+      attributes
     } = props;
-    const {
-      toolbarAttribute
-    } = attributes;
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockControls, {
       group: "block"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarGroup, {
@@ -149,20 +128,20 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
   };
 }, 'withEmojiListToolbar');
 
-// Add new filters to toolbars
+// Add new filter to toolbars
 wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-toolbar-button', withEmojiListToolbar);
 
 /**
  * Get Emojis data from emojihub API to render them in toolbar custom list
  */
 function EmojisData() {
-  const StoredEmojis = JSON.parse(window.localStorage.getItem("EmojiHubItems"));
+  const StoredEmojis = JSON.parse(window.localStorage.getItem('EmojiHubItems'));
   if (StoredEmojis === null || StoredEmojis < 1) {
     const apiUrl = 'https://emojihub.yurace.pro/api/all';
 
     // Make a GET request to API using the fetchData
     const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-    let aAdjustedEmoji = [];
+    let aAdjustedEmojis = [];
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
       fetchData();
     }, []);
@@ -175,34 +154,34 @@ function EmojisData() {
         console.error('Error fetching data:', error);
       }
     };
-    console.log("Raw Data", data);
+    console.log('Raw Emoji Data from API', data);
     if (data.length > 0) {
       // Extract necessary data from API. Push it into own array
       data.forEach(function (oEmoji) {
-        // Convert unicode emoji into string variable (character)
-        let sConvertedUnicode = oEmoji.unicode[0].replace(/U/g, "0").replace(/\+/g, "x");
-        var oAdjustedEmoji = {
-          "category": oEmoji.category,
-          "group": oEmoji.group,
-          "name": oEmoji.name,
-          "character": String.fromCodePoint(sConvertedUnicode)
+        // Convert unicode emoji into string letiable (character)
+        let sConvertedUnicode = oEmoji.unicode[0].replace(/U/g, '0').replace(/\+/g, 'x');
+        let oAdjustedEmoji = {
+          'category': oEmoji.category,
+          'group': oEmoji.group,
+          'name': oEmoji.name,
+          'character': String.fromCodePoint(sConvertedUnicode)
         };
-        aAdjustedEmoji.push(oAdjustedEmoji);
+        aAdjustedEmojis.push(oAdjustedEmoji);
       });
-      console.log("All Emojis Unicode", aAdjustedEmoji);
+      console.log('All Emojis Unicode', aAdjustedEmojis);
 
       // Set the emojis into a local storage item to safe requests
-      window.localStorage.setItem("EmojiHubItems", JSON.stringify(aAdjustedEmoji));
+      window.localStorage.setItem('EmojiHubItems', JSON.stringify(aAdjustedEmojis));
 
       // Return array as result for toolbar list
-      return aAdjustedEmoji;
+      return aAdjustedEmojis;
     } else {
-      // When no data is fetched, return null. Otherwise function errors.
+      // When no data is fetched, return empty array. Otherwise function errors.
       return [];
     }
   } else {
     // If emojis are stored return them from local storage
-    var aEmojisFromStorage = JSON.parse(window.localStorage.getItem("EmojiHubItems"));
+    let aEmojisFromStorage = JSON.parse(window.localStorage.getItem('EmojiHubItems'));
     return aEmojisFromStorage;
   }
 }
@@ -211,35 +190,36 @@ function EmojisData() {
  * Toggle visibility of emoji select container
  */
 function toggleEmojiList() {
-  var emojiSelectContainer = jQuery("#emojiSelectContainer");
-  emojiSelectContainer.toggleClass("emoji-toolbar__select-container--show");
+  let emojiSelectContainer = jQuery('#emojiSelectContainer');
+  emojiSelectContainer.toggleClass('emoji-toolbar__select-container--show');
 }
 
 /**
  * When emoji is selected from toolbar list, insert it into parents content
  */
 function setEmojiIntoText(emojiCharacter) {
-  var cActiveblock = wp.data.select('core/block-editor');
+  // Get current active block
+  let cActiveblock = wp.data.select('core/block-editor');
 
   // Get selected block
-  var cSelectedBlock = wp.data.select('core/block-editor').getSelectedBlock();
+  let cSelectedBlock = cActiveblock.getSelectedBlock();
 
   // Get selected block content
-  var sSelectedBlockContent = cSelectedBlock.attributes["content"];
+  let sSelectedBlockContent = cSelectedBlock.attributes['content'];
 
   //Set current selected block isTyping true, so changes can be detected.
   wp.data.dispatch('core/block-editor').updateBlock(cSelectedBlock.clientId, {
-    "isTyping": "true",
-    "isEditing": "true"
+    'isTyping': 'true',
+    'isEditing': 'true'
   });
 
   // Get last position of the cursor
-  var startPos = wp.data.select('core/block-editor').getSelectionStart().offset;
-  var endPos = wp.data.select('core/block-editor').getSelectionEnd().offset;
+  let startPos = cActiveblock.getSelectionStart().offset;
+  let endPos = cActiveblock.getSelectionEnd().offset;
 
   // Place new content (new emoji) into selected block
-  cSelectedBlock.attributes["content"] = "";
-  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + emojiCharacter + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
+  cSelectedBlock.attributes['content'] = '';
+  cSelectedBlock.attributes['content'] = sSelectedBlockContent.substring(0, startPos) + emojiCharacter + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
 }
 
 /***/ }),
@@ -273,16 +253,6 @@ module.exports = window["React"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["blockEditor"];
-
-/***/ }),
-
-/***/ "@wordpress/blocks":
-/*!********************************!*\
-  !*** external ["wp","blocks"] ***!
-  \********************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["blocks"];
 
 /***/ }),
 
