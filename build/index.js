@@ -118,8 +118,12 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockControls, {
       group: "block"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarGroup, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ToolbarDropdownMenu, {
+      className: "emoji-dropdown",
       title: ";-)",
-      icon: "\uD83D\uDE00",
+      icon: (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
+        role: "img",
+        "aria-label": "globe"
+      }, "\uD83D\uDE0E"),
       label: "Select Emoji",
       controls:
       // Create control for each emoji from API
@@ -130,7 +134,7 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
               __html: sHtmlEmoji
             }
           }),
-          onClick: () => setEmojiIntoText(sHtmlEmoji)
+          onClick: () => (getEmojiClickEvent(event), setEmojiIntoText(sHtmlEmoji))
         };
       })
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockEdit, {
@@ -141,6 +145,9 @@ const withEmojiListToolbar = createHigherOrderComponent(BlockEdit => {
 
 // Add new filters to toolbars
 wp.hooks.addFilter('editor.BlockEdit', 'custom-attributes/with-toolbar-button', withEmojiListToolbar);
+function getEmojiClickEvent(event) {
+  console.log("EmojiClickEvent", event);
+}
 
 /**
  * Get Emojis data from emojihub API to render them in toolbar custom list
@@ -206,6 +213,7 @@ wp.data.subscribe(() => {
  * When emoji is selected from toolbar list, insert it into parents content
  */
 function setEmojiIntoText(sHtmlEmoji) {
+  jQuery.decodeEntities = sHtmlEmoji;
   var cActiveblock = wp.data.select('core/block-editor');
   console.log("Active block ", cActiveblock);
 
@@ -228,7 +236,7 @@ function setEmojiIntoText(sHtmlEmoji) {
 
   // Place new content (new emoji) into selected block
   cSelectedBlock.attributes["content"] = "";
-  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + "<html>" + sHtmlEmoji + "</html>" + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
+  cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos) + sHtmlEmoji + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
 }
 
 /***/ }),

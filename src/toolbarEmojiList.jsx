@@ -62,8 +62,9 @@ const withEmojiListToolbar = createHigherOrderComponent( ( BlockEdit ) => {
                 <BlockControls group="block">
                     <ToolbarGroup>
                         <ToolbarDropdownMenu
+                            className="emoji-dropdown"
                             title= ";-)"
-                            icon= "&#128512;"
+                            icon={<span role="img" aria-label="globe">😎</span>}
                             label="Select Emoji"
                             controls={
                                 // Create control for each emoji from API
@@ -71,7 +72,7 @@ const withEmojiListToolbar = createHigherOrderComponent( ( BlockEdit ) => {
                                     return (
                                         {
                                             title: <div dangerouslySetInnerHTML={{__html: sHtmlEmoji}} ></div>,
-                                            onClick: () => setEmojiIntoText(sHtmlEmoji),
+                                            onClick: () => (getEmojiClickEvent(event), setEmojiIntoText(sHtmlEmoji)),
                                         }
                                     )
                                 })
@@ -92,6 +93,10 @@ wp.hooks.addFilter(
     withEmojiListToolbar
 );
 
+
+function getEmojiClickEvent(event) {
+    console.log("EmojiClickEvent", event)
+}
 
 
 /**
@@ -170,6 +175,7 @@ wp.data.subscribe(() => {
  * When emoji is selected from toolbar list, insert it into parents content
  */
 function setEmojiIntoText(sHtmlEmoji) {
+    jQuery.decodeEntities = sHtmlEmoji;
     var cActiveblock = wp.data.select('core/block-editor');
     console.log("Active block ", cActiveblock);
 
@@ -195,7 +201,7 @@ function setEmojiIntoText(sHtmlEmoji) {
     // Place new content (new emoji) into selected block
     cSelectedBlock.attributes["content"] = "";
     cSelectedBlock.attributes["content"] = sSelectedBlockContent.substring(0, startPos)
-    + "<html>"+sHtmlEmoji+"</html>"
+    + sHtmlEmoji
     + sSelectedBlockContent.substring(endPos, sSelectedBlockContent.length);
 }
 
