@@ -16,28 +16,48 @@
   box-shadow: none !important;
 }
 
-.emoji-dropdown .components-dropdown-menu__toggle.has-icon {
-  display: flex;
-  flex-direction: column;
+.emoji-toolbar__toogle-button span {
+  font-size: 1.2rem;
 }
-.emoji-dropdown .components-dropdown-menu__toggle.has-icon span {
-  font-size: 18px;
-  margin-bottom: 2px;
-}
-.emoji-dropdown .components-dropdown-menu__toggle.has-icon:after {
-  content: "";
-  border-style: solid;
-  border-width: 0.15em 0.15em 0 0;
-  display: inline-block;
-  height: 0.5em;
-  width: 0.55em;
-  left: 0.15em;
-  top: 0.25em;
-  vertical-align: top;
-  transform: rotate(135deg);
+.emoji-toolbar__select-container {
+  position: absolute;
+  width: calc(100% + 5px);
+  top: 0;
+  left: 0;
+  opacity: 0;
+  overflow-x: scroll;
+  background: #fff;
+  border: solid 0.095rem #000;
+  border-top: none;
+  border-radius: 3px;
+  z-index: -1;
   transition-duration: 0.5s;
   transition-property: all;
   transition-timing-function: ease;
+}
+.emoji-toolbar__select-container-item {
+  min-height: 40px !important;
+  min-width: 40px !important;
+}
+.emoji-toolbar__select-container-item button {
+  width: 40px;
+  height: 40px;
+  font-size: 1.3rem;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition-duration: 0.5s;
+  transition-property: all;
+  transition-timing-function: ease;
+}
+.emoji-toolbar__select-container-item button:hover {
+  font-size: 1.6rem;
+}
+.emoji-toolbar__select-container--show {
+  top: 47px;
+  opacity: 1;
+  z-index: 0;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

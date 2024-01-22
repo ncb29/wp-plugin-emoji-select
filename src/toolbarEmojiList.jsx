@@ -1,5 +1,6 @@
 import { useBlockProps } from '@wordpress/block-editor';
 import React, { useEffect, useState } from 'react';
+import { Flex, FlexBlock, FlexItem } from '@wordpress/components';
 
 /* Add custom attribute to paragraph block, in Toolbar */
 const { __ } = wp.i18n;
@@ -14,6 +15,7 @@ const { Fragment } = wp.element;
 const { BlockControls } = wp.blockEditor;
 const {
     ToolbarGroup,
+    ToolbarButton,
     ToolbarDropdownMenu
 } = wp.components;
 
@@ -60,24 +62,22 @@ const withEmojiListToolbar = createHigherOrderComponent( ( BlockEdit ) => {
         return (
             <Fragment>  
                 <BlockControls group="block">
-                    <ToolbarGroup>
-                        <ToolbarDropdownMenu
-                            className="emoji-dropdown"
-                            title= ";-)"
+                    <ToolbarGroup className="emoji-toolbar">
+                        <ToolbarButton
+                            className="emoji-toolbar__toogle-button"
                             icon={<span role="img" aria-label="globe">😎</span>}
                             label="Select Emoji"
-                            controls={
-                                // Create control for each emoji from API
-                                EmojisData().map(oEmoji => {
-                                    return (
-                                        {
-                                            title: <div dangerouslySetInnerHTML={{__html: oEmoji.character}} ></div>,
-                                            onClick: () => (getEmojiClickEvent(event), setEmojiIntoText(oEmoji.character)),
-                                        }
-                                    )
-                                })
-                            }                               
+                            onClick={ () => toggleEmojiList()}
                         />
+                        <Flex id="emojiSelectContainer" className="emoji-toolbar__select-container">
+                            {EmojisData().map(oEmoji => {
+                                return (
+                                    <FlexItem className="emoji-toolbar__select-container-item">
+                                        <button dangerouslySetInnerHTML={{__html: oEmoji.character}} onClick={ () => (setEmojiIntoText(oEmoji.character)) }></button>
+                                    </FlexItem>
+                                )
+                            })}
+                        </Flex>                       
                     </ToolbarGroup>
                 </BlockControls>
                 <BlockEdit { ...props } />
@@ -93,10 +93,6 @@ wp.hooks.addFilter(
     withEmojiListToolbar
 );
 
-
-function getEmojiClickEvent(event) {
-    console.log("EmojiClickEvent", event)
-}
 
 
 /**
@@ -166,12 +162,12 @@ function EmojisData() {
 
 
 /**
- * Check if is typing is active on any block (helper)
+ * Toggle visibility of emoji select container
  */
-wp.data.subscribe(() => {
-	const isTyping = wp.data.select('core/block-editor').isTyping()
-	if(isTyping) console.log("Currently typing")
-})
+function toggleEmojiList () {
+    var emojiSelectContainer = jQuery("#emojiSelectContainer");
+    emojiSelectContainer.toggleClass("emoji-toolbar__select-container--show");
+}
 
 
 
@@ -180,17 +176,14 @@ wp.data.subscribe(() => {
  */
 function setEmojiIntoText(emojiCharacter) {
     var cActiveblock = wp.data.select('core/block-editor');
-    console.log("Active block ", cActiveblock);
 
     // Get selected block
     var cSelectedBlock = wp.data.select('core/block-editor').getSelectedBlock();
-    console.log("selected Block", cSelectedBlock);
 
     // Get selected block content
     var sSelectedBlockContent = cSelectedBlock.attributes["content"];
 
     //Set current selected block isTyping true, so changes can be detected.
-    console.log("Selected Block Dispatch", wp.data.dispatch( 'core/block-editor' ));
     wp.data.dispatch( 'core/block-editor' ).updateBlock(
         cSelectedBlock.clientId, {
             "isTyping": "true",
@@ -201,7 +194,6 @@ function setEmojiIntoText(emojiCharacter) {
     // Get last position of the cursor
     var startPos = wp.data.select('core/block-editor').getSelectionStart().offset;
     var endPos = wp.data.select('core/block-editor').getSelectionEnd().offset;
-    console.log("Start + End", startPos, endPos);
 
     // Place new content (new emoji) into selected block
     cSelectedBlock.attributes["content"] = "";
